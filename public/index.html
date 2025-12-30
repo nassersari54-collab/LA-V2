@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LightLand RP — Panel joueur</title>
+<style>
+  :root{
+    --stroke: rgba(255,255,255,.12);
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --txt: rgba(255,255,255,.92);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--txt);
+    background:
+      radial-gradient(900px 400px at 15% 25%, rgba(255,70,160,.20), transparent 60%),
+      radial-gradient(900px 520px at 85% 20%, rgba(120,90,255,.22), transparent 60%),
+      radial-gradient(900px 520px at 65% 80%, rgba(70,190,255,.12), transparent 60%),
+      linear-gradient(180deg,#12001f,#07020f);
+    min-height:100vh;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:22px}
+  .glass{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); backdrop-filter: blur(12px);}
+  .top{border-radius:28px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 0 0 1px rgba(255,255,255,.06), 0 20px 60px rgba(0,0,0,.6)}
+  .brand{display:flex; align-items:center; gap:12px}
+  .logo{width:38px;height:38px;border-radius:16px;background:rgba(255,255,255,.10);border:1px solid var(--stroke);display:grid;place-items:center;font-weight:800}
+  .sub{font-size:11px;letter-spacing:.35em;opacity:.7}
+  .title{font-weight:700}
+  .pill{border-radius:999px;padding:10px 14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:white;text-decoration:none}
+  .grid{display:grid; grid-template-columns:260px 1fr; gap:18px; margin-top:18px}
+  .side{border-radius:28px; padding:14px; position:sticky; top:18px; height:fit-content}
+  .side h4{margin:6px 10px 10px; font-size:11px; letter-spacing:.28em; opacity:.7}
+  .navbtn{width:100%; text-align:left; padding:14px 14px; border-radius:18px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05); color:white; cursor:pointer; margin:6px 0; font-size:14px}
+  .navbtn.active{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.16)}
+  .main{border-radius:28px; padding:22px}
+  .h1{font-size:46px; font-weight:650; margin:10px 0 10px}
+  .muted{opacity:.75}
+  .btn{border-radius:999px; padding:12px 16px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:white; cursor:pointer; font-weight:600}
+  .btn.primary{background:linear-gradient(90deg, rgba(138,92,255,.95), rgba(255,75,164,.95)); border-color: rgba(255,255,255,.10)}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+  .cards{display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:18px}
+  .card{border-radius:24px; padding:16px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05)}
+  .card b{display:block; margin-bottom:6px}
+  .two{display:grid; grid-template-columns: 1fr 240px; gap:14px}
+  .box{border-radius:24px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05); padding:16px}
+  .invgrid{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px}
+  .slots{display:grid; grid-template-columns: repeat(5, 1fr); gap:8px}
+  .slot{aspect-ratio: 1/1; border-radius:14px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05)}
+  .sil{height:320px; border-radius:24px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05); display:grid; place-items:center}
+  .bar{display:flex; gap:10px; align-items:center; justify-content:space-between}
+  input, textarea{
+    width:100%; border-radius:18px; border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.25); color:white; padding:12px 14px; outline:none;
+  }
+  .list{display:flex; flex-direction:column; gap:10px; margin-top:10px}
+  .item{border-radius:18px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.05); padding:12px}
+  .phone{
+    max-width:360px; margin:14px auto 0;
+    border-radius:44px; border:1px solid rgba(255,255,255,.15);
+    background:rgba(0,0,0,.55); box-shadow:0 0 0 1px rgba(255,255,255,.06), 0 20px 60px rgba(0,0,0,.6);
+    overflow:hidden;
+  }
+  .phoneTop{padding:14px 18px; display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.10)}
+  .apps{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:16px}
+  .app{border-radius:22px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); padding:12px; cursor:pointer}
+  .icon{width:42px;height:42px;border-radius:18px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12); margin-bottom:8px}
+  .small{font-size:12px; opacity:.7}
+  .screen{padding:16px}
+  .back{cursor:pointer; opacity:.8}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media (max-width: 980px){ .grid{grid-template-columns:1fr} .two{grid-template-columns:1fr} .cards{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top glass">
+      <div class="brand">
+        <div class="logo">LL</div>
+        <div>
+          <div class="sub">LIGHTLAND RP</div>
+          <div class="title">Panel joueur</div>
+        </div>
+      </div>
+      <a class="pill" href="#" onclick="alert('Mets ton lien Discord ici');return false;">Discord</a>
+    </div>
+
+    <div class="grid">
+      <div class="side glass">
+        <h4>ONGLETS</h4>
+        <button class="navbtn" data-route="home" onclick="go('home')">Accueil</button>
+        <button class="navbtn" data-route="inventaire" onclick="go('inventaire')">Inventaire</button>
+        <button class="navbtn" data-route="telephone" onclick="go('telephone')">Téléphone</button>
+        <button class="navbtn" data-route="actions" onclick="go('actions')">Actions</button>
+        <button class="navbtn" data-route="metier" onclick="go('metier')">Métier</button>
+
+        <div class="box" style="margin-top:12px">
+          <div class="sub">TOKENS</div>
+          <div class="small" style="margin-top:6px">
+            Mets tes tokens dans l'URL :<br/>
+            <span class="small">?panel_token=XXX&phone_token=YYY</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main glass">
+        <div id="view"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const API = "";
+function qs() {
+  const u = new URL(window.location.href);
+  return {
+    panel: u.searchParams.get("panel_token") || "",
+    phone: u.searchParams.get("phone_token") || ""
+  };
+}
+function setActive(route){
+  document.querySelectorAll(".navbtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.route===route);
+  });
+}
+function go(route){
+  window.location.hash = route;
+}
+function route(){
+  return (window.location.hash || "#home").replace("#","");
+}
+
+async function jsonFetch(url, opts){
+  const r = await fetch(url, opts);
+  const t = await r.text();
+  try { return JSON.parse(t); } catch { throw new Error(t); }
+}
+
+function viewHome(){
+  const {panel} = qs();
+  return `
+    <div class="sub">GESTION DE PERSONNAGE</div>
+    <div class="h1">Bienvenus sur ton Panel RP</div>
+    <div class="muted">PROFIL CONNECTÉ : <b>VISTA KYLE</b></div>
+    <p class="muted" style="max-width:680px;line-height:1.6;margin-top:10px">
+      Panel équivalent : inventaire, téléphone RP, actions, métier. Accessible par lien + tokens.
+    </p>
+    <div class="btnrow">
+      <button class="btn primary" onclick="go('telephone')">Ouvrir le téléphone</button>
+      <button class="btn" onclick="go('inventaire')">Voir l'inventaire</button>
+    </div>
+    <div class="cards">
+      <div class="card"><b>Inventaire vivant</b><div class="muted">Ajout +1 eau / +1 sandwich</div></div>
+      <div class="card"><b>Téléphone connecté</b><div class="muted">Messages / Contacts / Apps</div></div>
+      <div class="card"><b>Actions rapides</b><div class="muted">Bientôt branchées serveur</div></div>
+      <div class="card"><b>Support dédié</b><div class="muted">Liens utiles</div></div>
+    </div>
+    <div style="margin-top:18px" class="small">
+      ${panel? "✅ panel_token détecté" : "⚠️ Ajoute un panel_token dans l'URL pour activer l'inventaire"}
+    </div>
+  `;
+}
+
+function slotsHTML(){
+  let s="";
+  for(let i=0;i<25;i++) s += `<div class="slot" title="slot ${i+1}"></div>`;
+  return s;
+}
+
+async function viewInventaire(){
+  const {panel} = qs();
+  if(!panel){
+    return `<div class="h1" style="font-size:34px">Inventaire</div>
+      <p class="muted">Ajoute <b>?panel_token=...</b> dans l'URL pour activer.</p>`;
+  }
+  const data = await jsonFetch(`/api/panel/inventory?panel_token=${encodeURIComponent(panel)}`);
+  const items = (data.items||[]).map(it=>`
+    <div class="item"><b>${it.label}</b> <span class="small">×${it.qty}</span><div class="small">${it.category||""}</div></div>
+  `).join("");
+  return `
+    <div class="bar">
+      <div>
+        <div class="sub">PANEL RP</div>
+        <div style="font-size:34px;font-weight:700;margin-top:4px">Inventaire</div>
+      </div>
+    </div>
+
+    <div class="two" style="margin-top:14px">
+      <div class="box">
+        <div class="invgrid">
+          <div class="box" style="background:rgba(255,255,255,.04)">
+            <div class="small" style="font-weight:700;opacity:.9;margin-bottom:10px">Mon inventaire</div>
+            <div class="slots">${slotsHTML()}</div>
+            <div class="small" style="margin-top:10px;font-style:italic">Mon inventaire</div>
+          </div>
+
+          <div class="box" style="background:rgba(255,255,255,.04)">
+            <div class="small" style="font-weight:700;opacity:.9;margin-bottom:10px">Corps</div>
+            <div class="sil">
+              <div class="muted" style="text-align:center">
+                <div style="width:86px;height:160px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);margin:0 auto 10px"></div>
+                Silhouette
+              </div>
+            </div>
+          </div>
+
+          <div class="box" style="background:rgba(255,255,255,.04)">
+            <div class="small" style="font-weight:700;opacity:.9;margin-bottom:10px">Mon inventaire</div>
+            <div class="slots">${slotsHTML()}</div>
+            <div class="small" style="margin-top:10px;font-style:italic">Mon inventaire</div>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="sub">BESOIN D'UN BOOST ?</div>
+          <div style="font-weight:700;margin-top:6px">Ravitaillement express</div>
+          <div class="muted" style="margin-top:6px">Ajoute instantanément +1 eau ou +1 sandwich dans ton sac.</div>
+          <div class="btnrow">
+            <button class="btn" onclick="quick('eau')">+1 Eau</button>
+            <button class="btn" onclick="quick('sandwich')">+1 Sandwich</button>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="row">
+            <input id="label" placeholder="Nom item (ex: Bandage)"/>
+            <input id="qty" placeholder="Quantité" value="1"/>
+          </div>
+          <div style="margin-top:10px">
+            <input id="cat" placeholder="Catégorie (ex: Soins)" value="Divers"/>
+          </div>
+          <div class="btnrow">
+            <button class="btn primary" onclick="addItem()">Ajouter item</button>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <input placeholder="ID Discord à inspecter (placeholder)"/>
+        </div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:700">Inventaire affiché</div>
+        <div class="muted" style="margin-top:8px">Tu consultes ton inventaire.</div>
+        <div class="small" style="margin-top:10px">Items ajoutés :</div>
+        <div class="list">${items || `<div class="small muted">Aucun item</div>`}</div>
+        <button class="btn" style="width:100%;margin-top:12px" onclick="go('inventaire')">Rafraîchir</button>
+      </div>
+    </div>
+  `;
+}
+
+async function quick(what){
+  const {panel} = qs();
+  await fetch(`/api/panel/quick?panel_token=${encodeURIComponent(panel)}`,{
+    method:"POST", headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({what})
+  });
+  render();
+}
+
+async function addItem(){
+  const {panel} = qs();
+  const label = document.getElementById("label").value.trim();
+  const qty = document.getElementById("qty").value.trim();
+  const category = document.getElementById("cat").value.trim();
+  if(!label) return alert("Mets un nom d'item");
+  await fetch(`/api/panel/inventory/add?panel_token=${encodeURIComponent(panel)}`,{
+    method:"POST", headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({label, qty:Number(qty||1), category})
+  });
+  render();
+}
+
+function phoneHome(apps){
+  return `
+    <div class="apps">
+      ${apps.map(a=>`
+        <div class="app" onclick="openApp('${a.id}')">
+          <div class="icon"></div>
+          <div style="font-weight:650">${a.name}</div>
+          <div class="small">${a.id}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+let PHONE_STATE = { screen:"home", apps:[], contacts:[], messages:[] };
+
+async function viewTelephone(){
+  const {phone} = qs();
+  if(!phone){
+    return `<div style="font-size:34px;font-weight:700">Téléphone</div>
+      <p class="muted">Ajoute <b>?phone_token=...</b> dans l'URL pour activer.</p>`;
+  }
+  const home = await jsonFetch(`/api/phone/home?phone_token=${encodeURIComponent(phone)}`);
+  PHONE_STATE.apps = home.apps || [];
+  return `
+    <div class="sub">PANEL RP</div>
+    <div style="font-size:34px;font-weight:700;margin-top:4px">Téléphone</div>
+    <div class="muted" style="margin-top:8px">Apps : Messages, Contacts, Birdy, Spark, TikTok partagé</div>
+
+    <div class="phone">
+      <div class="phoneTop">
+        <div style="font-weight:700">Téléphone</div>
+        <div class="small">LightLand</div>
+      </div>
+      <div id="phoneBody">
+        ${phoneHome(PHONE_STATE.apps)}
+      </div>
+    </div>
+  `;
+}
+
+async function openApp(id){
+  const {phone} = qs();
+  const body = document.getElementById("phoneBody");
+  if(!body) return;
+  if(id==="contacts"){
+    const d = await jsonFetch(`/api/phone/contacts?phone_token=${encodeURIComponent(phone)}`);
+    PHONE_STATE.contacts = d.contacts || [];
+    body.innerHTML = `
+      <div class="screen">
+        <div class="bar"><div style="font-weight:700">Contacts</div><div class="back" onclick="backPhone()">←</div></div>
+        <div class="row" style="margin-top:10px">
+          <input id="cname" placeholder="Nom"/>
+          <input id="cnum" placeholder="Numéro"/>
+        </div>
+        <div class="btnrow"><button class="btn primary" onclick="addContact()">Ajouter</button></div>
+        <div class="list">
+          ${PHONE_STATE.contacts.map(c=>`<div class="item"><b>${c.name}</b><div class="small">${c.number}</div></div>`).join("") || `<div class="small muted">Aucun contact</div>`}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  if(id==="messages"){
+    const d = await jsonFetch(`/api/phone/messages?phone_token=${encodeURIComponent(phone)}`);
+    PHONE_STATE.messages = d.messages || [];
+    body.innerHTML = `
+      <div class="screen">
+        <div class="bar"><div style="font-weight:700">Messages</div><div class="back" onclick="backPhone()">←</div></div>
+        <div class="row" style="margin-top:10px">
+          <input id="from" placeholder="De" value="0000"/>
+          <input id="to" placeholder="À (numéro)"/>
+        </div>
+        <div style="margin-top:10px"><textarea id="msg" placeholder="Message..." rows="3"></textarea></div>
+        <div class="btnrow"><button class="btn primary" onclick="sendMessage()">Envoyer</button></div>
+        <div class="list">
+          ${PHONE_STATE.messages.map(m=>`<div class="item"><div class="small">${m.fromNumber} → ${m.toNumber}</div><div>${m.body}</div></div>`).join("") || `<div class="small muted">Aucun message</div>`}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  // placeholder apps
+  body.innerHTML = `
+    <div class="screen">
+      <div class="bar"><div style="font-weight:700">${id}</div><div class="back" onclick="backPhone()">←</div></div>
+      <div class="box" style="margin-top:12px">App <b>${id}</b> (placeholder). Je peux te la faire comme l'original quand tu veux.</div>
+    </div>
+  `;
+}
+
+function backPhone(){
+  const body = document.getElementById("phoneBody");
+  if(!body) return;
+  body.innerHTML = phoneHome(PHONE_STATE.apps);
+}
+
+async function addContact(){
+  const {phone} = qs();
+  const name = document.getElementById("cname").value.trim();
+  const number = document.getElementById("cnum").value.trim();
+  if(!name || !number) return alert("Nom + numéro");
+  await fetch(`/api/phone/contacts/add?phone_token=${encodeURIComponent(phone)}`,{
+    method:"POST", headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name, number})
+  });
+  openApp("contacts");
+}
+
+async function sendMessage(){
+  const {phone} = qs();
+  const fromNumber = document.getElementById("from").value.trim();
+  const toNumber = document.getElementById("to").value.trim();
+  const body = document.getElementById("msg").value.trim();
+  if(!fromNumber || !toNumber || !body) return alert("De + À + message");
+  await fetch(`/api/phone/messages/send?phone_token=${encodeURIComponent(phone)}`,{
+    method:"POST", headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({fromNumber, toNumber, body})
+  });
+  openApp("messages");
+}
+
+async function viewActions(){
+  return `
+    <div class="sub">PANEL RP</div>
+    <div style="font-size:34px;font-weight:700;margin-top:4px">Actions</div>
+    <p class="muted" style="margin-top:8px">Page prête à brancher (jobs, staff, utilitaires).</p>
+    <div class="cards" style="grid-template-columns:repeat(2,1fr);margin-top:12px">
+      <div class="card"><b>Jobs</b><div class="muted">Prise de service, annonces, outils</div><div class="btnrow"><button class="btn">Ouvrir</button></div></div>
+      <div class="card"><b>Demandes staff</b><div class="muted">Tickets, bugs, intervention</div><div class="btnrow"><button class="btn">Ouvrir</button></div></div>
+      <div class="card"><b>Interactions</b><div class="muted">Actions rapides</div><div class="btnrow"><button class="btn">Ouvrir</button></div></div>
+      <div class="card"><b>Utilitaires</b><div class="muted">Reset, notif, etc.</div><div class="btnrow"><button class="btn">Ouvrir</button></div></div>
+    </div>
+  `;
+}
+
+async function viewMetier(){
+  return `
+    <div class="sub">PANEL RP</div>
+    <div style="font-size:34px;font-weight:700;margin-top:4px">Métier</div>
+    <p class="muted" style="margin-top:8px">Page prête à brancher (métier, grade, service).</p>
+
+    <div class="cards" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
+      <div class="card"><div class="sub">Métier</div><b>—</b></div>
+      <div class="card"><div class="sub">Grade</div><b>—</b></div>
+      <div class="card"><div class="sub">Service</div><b>Hors service</b></div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn">Prendre service</button>
+      <button class="btn">Quitter service</button>
+      <button class="btn">Annonce</button>
+    </div>
+  `;
+}
+
+async function render(){
+  const r = route();
+  setActive(r);
+  const view = document.getElementById("view");
+  view.innerHTML = `<div class="muted">Chargement…</div>`;
+  try{
+    if(r==="home") view.innerHTML = viewHome();
+    else if(r==="inventaire") view.innerHTML = await viewInventaire();
+    else if(r==="telephone") view.innerHTML = await viewTelephone();
+    else if(r==="actions") view.innerHTML = await viewActions();
+    else if(r==="metier") view.innerHTML = await viewMetier();
+    else { window.location.hash="home"; }
+  }catch(e){
+    view.innerHTML = `
+      <div style="font-size:28px;font-weight:700">Erreur</div>
+      <div class="muted" style="margin-top:10px;white-space:pre-wrap">${String(e.message||e)}</div>
+      <div class="box" style="margin-top:12px">
+        <div class="sub">ASTUCE</div>
+        <div class="muted" style="margin-top:6px">
+          Si c'est la première fois : utilise /api/setup (voir README).
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
